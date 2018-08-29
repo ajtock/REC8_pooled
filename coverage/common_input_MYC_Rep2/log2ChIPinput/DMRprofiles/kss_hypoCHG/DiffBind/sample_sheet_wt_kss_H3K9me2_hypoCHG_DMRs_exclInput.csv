@@ -1,0 +1,3 @@
+SampleID,Condition,Replicate,bamReads,Peaks,PeakCaller
+wt_H3K9me2_ChIP,wt,1,reads/WT_H3K9me2_ChIP.bam,suvh456_hypoCHG_DMR.bed,bed
+kss_H3K9me2_ChIP,kss,1,reads/kss_H3K9me2_ChIP.bam,suvh456_hypoCHG_DMR.bed,bed
