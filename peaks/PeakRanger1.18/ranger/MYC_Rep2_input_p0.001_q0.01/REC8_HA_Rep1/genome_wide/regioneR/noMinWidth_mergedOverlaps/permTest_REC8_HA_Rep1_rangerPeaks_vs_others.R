@@ -4,7 +4,7 @@
 # of interest (e.g., other peaks, genes, TEs) more or less than expected by chance
 
 # Usage on hydrogen node7:
-# csmit -m 24G -c 24 "Rscript permTest_REC8_HA_Rep1_rangerPeaks_vs_others.R"
+# csmit -m 48G -c 48 "Rscript permTest_REC8_HA_Rep1_rangerPeaks_vs_others.R"
 
 library(regioneR)
 
@@ -17,9 +17,9 @@ pericenStart <- c(11330001, 990001, 10200001, 990001, 8890001)
 pericenEnd <- c(18480000, 7540000, 16860000, 6850000, 15650000)
 genome <- toGRanges(data.frame(chrs, chrStart, chrLens))
 
-inDir <- "/home/meiosis/ajt200/analysis/REC8_pooled/peaks/PeakRanger1.18/ranger/MYC_Rep2_input_p0.001_q0.01/"
-outDir <- "/home/meiosis/ajt200/analysis/REC8_pooled/peaks/PeakRanger1.18/ranger/MYC_Rep2_input_p0.001_q0.01/REC8_HA_Rep1/genome_wide/regioneR/noMinWidth_mergedOverlaps/"
-plotDir <- "/home/meiosis/ajt200/analysis/REC8_pooled/peaks/PeakRanger1.18/ranger/MYC_Rep2_input_p0.001_q0.01/REC8_HA_Rep1/genome_wide/regioneR/noMinWidth_mergedOverlaps/plots/"
+inDir <- "/home/ajt200/analysis/REC8_pooled/peaks/PeakRanger1.18/ranger/MYC_Rep2_input_p0.001_q0.01/"
+outDir <- "/home/ajt200/analysis/REC8_pooled/peaks/PeakRanger1.18/ranger/MYC_Rep2_input_p0.001_q0.01/REC8_HA_Rep1/genome_wide/regioneR/noMinWidth_mergedOverlaps/"
+plotDir <- "/home/ajt200/analysis/REC8_pooled/peaks/PeakRanger1.18/ranger/MYC_Rep2_input_p0.001_q0.01/REC8_HA_Rep1/genome_wide/regioneR/noMinWidth_mergedOverlaps/plots/"
 
 # REC8 peaks
 load(paste0(inDir,
@@ -241,7 +241,7 @@ ptPeaksOtherPerChrom <- lapply(seq_along(grl), function(x) {
            randomize.function = randomizeRegions,
            allow.overlaps = TRUE, per.chromosome = TRUE,
            evaluate.function = numOverlaps, count.once = TRUE,
-           ntimes = 10000, mc.set.seed = FALSE, mc.cores = 24)
+           ntimes = 10000, mc.set.seed = FALSE, mc.cores = 48)
 })
 
 for(i in 1:length(ptPeaksOtherPerChrom)) {

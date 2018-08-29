@@ -3,16 +3,16 @@
 # Plot bar chart of log2(observed:expected) peaks overlapping TEs within each family
 
 # Usage:
-# Rscript TE_family_wt_REC8_HA_Rep1_vs_kss_REC8_HA_Rep1_genome_wide_peaks.R "REC8 peaks" "wt REC8-HA Rep1" "kss REC8-HA Rep1" wt_REC8_HA_Rep1 kss_REC8_HA_Rep1 10000
+# Rscript TE_family_wt_REC8_HA_Rep1_vs_wt_REC8_MYC_Rep1_genome_wide_peaks.R "REC8 peaks" "wt REC8-HA Rep1" "wt REC8-MYC Rep1" wt_REC8_HA_Rep1 wt_REC8_MYC_Rep1 10000
 
 library(ggplot2)
 library(ggthemes)
 
 dataName <- "REC8 peaks" 
 pt1Name <- "wt REC8-HA Rep1" 
-pt2Name <-  "kss REC8-HA Rep1" 
+pt2Name <-  "wt REC8-MYC Rep1" 
 pt1LibName <- "wt_REC8_HA_Rep1"
-pt2LibName <- "kss_REC8_HA_Rep1"
+pt2LibName <- "wt_REC8_MYC_Rep1"
 # Number of permutations (randomisations) performed
 perms <- 10000
 
@@ -26,9 +26,9 @@ pt2LibName <- as.character(args[5])
 perms <- as.numeric(args[6])
 
 
-inDir1 <- "/home/ajt200/analysis/REC8_pooled/peaks/PeakRanger1.18/ranger/MYC_Rep2_input_p0.001_q0.01/REC8_HA_Rep1/genome_wide/regioneR/noMinWidth_mergedOverlaps/"
-inDir2 <- "/home/ajt200/analysis/REC8_pooled/peaks/PeakRanger1.18/ranger/MYC_Rep2_input_p0.001_q0.01/kss_REC8_HA_Rep1/genome_wide/regioneR/noMinWidth_mergedOverlaps/"
-plotDir <- "/home/ajt200/analysis/REC8_pooled/peaks/PeakRanger1.18/ranger/MYC_Rep2_input_p0.001_q0.01/REC8_HA_Rep1/genome_wide/regioneR/noMinWidth_mergedOverlaps/plots/"
+inDir1 <- "/home/meiosis/ajt200/analysis/REC8_pooled/peaks/PeakRanger1.18/ranger/MYC_Rep2_input_p0.001_q0.01/REC8_HA_Rep1/genome_wide/regioneR/noMinWidth_mergedOverlaps/"
+inDir2 <- "/home/meiosis/ajt200/analysis/REC8_pooled/peaks/PeakRanger1.18/ranger/MYC_Rep2_input_p0.001_q0.01/REC8_MYC_Rep1/genome_wide/regioneR/noMinWidth_mergedOverlaps/"
+plotDir <- "/home/meiosis/ajt200/analysis/REC8_pooled/peaks/PeakRanger1.18/ranger/MYC_Rep2_input_p0.001_q0.01/REC8_HA_Rep1/genome_wide/regioneR/noMinWidth_mergedOverlaps/plots/"
 
 famNames <- c("dna", "heli", "ptmari", "mudr", "enspm", "hat", "harbinger",
               "rna", "gypsy", "copia", "linel1", "sine")
@@ -43,10 +43,10 @@ pt1_RNA <- ptPeaksTEsRNAPerChrom
 ptPeaksTEsRNAPerChrom <- NULL
 pt1 <- c(pt1_DNA, pt1_RNA)
 
-load(paste0(inDir2, "permTest_kss_REC8_HA_Rep1_rangerPeaks_vs_TEsDNA.RData"))
+load(paste0(inDir2, "permTest_REC8_MYC_Rep1_rangerPeaks_vs_TEsDNA.RData"))
 pt2_DNA <- ptPeaksTEsDNAPerChrom
 ptPeaksTEsDNAPerChrom <- NULL
-load(paste0(inDir2, "permTest_kss_REC8_HA_Rep1_rangerPeaks_vs_TEsRNA.RData"))
+load(paste0(inDir2, "permTest_REC8_MYC_Rep1_rangerPeaks_vs_TEsRNA.RData"))
 pt2_RNA <- ptPeaksTEsRNAPerChrom
 ptPeaksTEsRNAPerChrom <- NULL
 pt2 <- c(pt2_DNA, pt2_RNA)
@@ -172,9 +172,5 @@ ggsave(paste0(plotDir, "barplot_TE_families_permTestResults_",
               "log2_Observed_Expected_", pt1LibName, "_", pt2LibName, "_peaks.pdf"),
        plot = bp,
        height = 4, width = 5)
-save(bp,
-     file = paste0(plotDir, "barplot_TE_families_permTestResults_",
-                   as.character(perms), "perms_",
-                  "log2_Observed_Expected_", pt1LibName, "_", pt2LibName, "_peaks.RData"))
 
  

@@ -1,9 +1,9 @@
 #!/applications/R/R-3.3.2/bin/Rscript
 
-# Plot bar chart of log2(observed:expected) peaks overlapping TEs within each family
+# Plot bar chart of log2(observed:expected) peaks overlapping other features
 
 # Usage:
-# Rscript TE_family_wt_REC8_HA_Rep1_vs_kss_REC8_HA_Rep1_genome_wide_peaks.R "REC8 peaks" "wt REC8-HA Rep1" "kss REC8-HA Rep1" wt_REC8_HA_Rep1 kss_REC8_HA_Rep1 10000
+# Rscript other_features_wt_REC8_HA_Rep1_vs_kss_REC8_HA_Rep1_genome_wide_peaks.R "REC8 peaks" "wt REC8-HA Rep1" "kss REC8-HA Rep1" wt_REC8_HA_Rep1 kss_REC8_HA_Rep1 10000
 
 library(ggplot2)
 library(ggthemes)
@@ -30,26 +30,33 @@ inDir1 <- "/home/ajt200/analysis/REC8_pooled/peaks/PeakRanger1.18/ranger/MYC_Rep
 inDir2 <- "/home/ajt200/analysis/REC8_pooled/peaks/PeakRanger1.18/ranger/MYC_Rep2_input_p0.001_q0.01/kss_REC8_HA_Rep1/genome_wide/regioneR/noMinWidth_mergedOverlaps/"
 plotDir <- "/home/ajt200/analysis/REC8_pooled/peaks/PeakRanger1.18/ranger/MYC_Rep2_input_p0.001_q0.01/REC8_HA_Rep1/genome_wide/regioneR/noMinWidth_mergedOverlaps/plots/"
 
-famNames <- c("dna", "heli", "ptmari", "mudr", "enspm", "hat", "harbinger",
-              "rna", "gypsy", "copia", "linel1", "sine")
-famNamesPlot <- c("DNA", "Helitrons", "Pogo/Tc1/Mariner", "MuDR", "EnSpm", "hAT", "Harbinger",
-                  "RNA", "Gypsy LTR", "Copia LTR", "LINE-1", "SINE")
+otherNames <- c("REC8_HA_Rep2GR", "REC8_MYC_Rep1GR", "kss_REC8_HA_Rep1GR",
+                "nucleRnucsGR", "rangernucsGR",
+                "SPO11GR", "SPO11_ChIP4GR", "SPO11_ChIP13GR",
+                "H3K4me3GR", "H3K9me2GR", "H3K9me2GRbcp", "COsGR",
+                "genesGR", "promotersGR", "terminatorsGR",
+                "TSSdownstream500GR", "TTSupstream500GR",
+                "exonsGR", "intronsGR", "TEsGR")
+otherNamesPlot <- c("REC8-HA Rep2", "REC8-MYC Rep1", "kss REC8-HA Rep1",
+                    "Nucleosomes", "Nucleosomes (ranger)",
+                    "SPO11-1-oligo hotspots/REC8-HA Rep1", "SPO11-1 ChIP peaks", "SPO11-1 ChIP13 peaks",
+                    "H3K4me3 peaks", "H3K9me2 peaks", "H3K9me2 peaks (bcp)", "Crossovers",
+                    "Genes", "Gene promoters", "Gene terminators",
+                    "Gene 5' ends", "Gene 3' ends",
+                    "Gene exons", "Gene introns", "Transposons")
 
-load(paste0(inDir1, "permTest_REC8_HA_Rep1_rangerPeaks_vs_TEsDNA.RData"))
-pt1_DNA <- ptPeaksTEsDNAPerChrom
-ptPeaksTEsDNAPerChrom <- NULL
-load(paste0(inDir1, "permTest_REC8_HA_Rep1_rangerPeaks_vs_TEsRNA.RData"))
-pt1_RNA <- ptPeaksTEsRNAPerChrom
-ptPeaksTEsRNAPerChrom <- NULL
-pt1 <- c(pt1_DNA, pt1_RNA)
+otherNames <- otherNames[c(-1:-3, -5, -8, -11)]
+otherNamesPlot <- otherNamesPlot[c(-1:-3, -5, -8, -11)]
 
-load(paste0(inDir2, "permTest_kss_REC8_HA_Rep1_rangerPeaks_vs_TEsDNA.RData"))
-pt2_DNA <- ptPeaksTEsDNAPerChrom
-ptPeaksTEsDNAPerChrom <- NULL
-load(paste0(inDir2, "permTest_kss_REC8_HA_Rep1_rangerPeaks_vs_TEsRNA.RData"))
-pt2_RNA <- ptPeaksTEsRNAPerChrom
-ptPeaksTEsRNAPerChrom <- NULL
-pt2 <- c(pt2_DNA, pt2_RNA)
+load(paste0(inDir1, "permTest_REC8_HA_Rep1_rangerPeaks_vs_others.RData"))
+pt1 <- ptPeaksOtherPerChrom
+ptPeaksOtherPerChrom <- NULL
+pt1 <- pt1[c(-1:-3, -5, -8, -11)]
+
+load(paste0(inDir2, "permTest_kss_REC8_HA_Rep1_rangerPeaks_vs_others.RData"))
+pt2 <- ptPeaksOtherPerChrom
+ptPeaksOtherPerChrom <- NULL
+pt2 <- pt2[c(-1:-3, -5, -8, -11)]
 
 # pt1
 pt1_Pval <- lapply(seq_along(pt1), function(x) {
@@ -86,8 +93,8 @@ pt1_log2alpha0.05 <- lapply(seq_along(pt1_alpha0.05), function(x) {
 
 pt1_log2ObsExp_sorted <- sort.int(unlist(pt1_log2ObsExp), decreasing = T)
 pt1_log2alpha0.05_sorted <- unlist(pt1_log2alpha0.05[sort.int(unlist(pt1_log2ObsExp), decreasing = T, index.return = T)$ix])
-pt1_famNames_sorted <- famNames[sort.int(unlist(pt1_log2ObsExp), decreasing = T, index.return = T)$ix]
-pt1_famNamesPlot_sorted <- famNamesPlot[sort.int(unlist(pt1_log2ObsExp), decreasing = T, index.return = T)$ix]
+pt1_otherNames_sorted <- otherNames[sort.int(unlist(pt1_log2ObsExp), decreasing = T, index.return = T)$ix]
+pt1_otherNamesPlot_sorted <- otherNamesPlot[sort.int(unlist(pt1_log2ObsExp), decreasing = T, index.return = T)$ix]
 
 
 # pt2
@@ -125,23 +132,23 @@ pt2_log2alpha0.05 <- lapply(seq_along(pt2_alpha0.05), function(x) {
 
 pt2_log2ObsExp_sorted <- unlist(pt2_log2ObsExp[sort.int(unlist(pt1_log2ObsExp), decreasing = T, index.return = T)$ix])
 pt2_log2alpha0.05_sorted <- unlist(pt2_log2alpha0.05[sort.int(unlist(pt1_log2ObsExp), decreasing = T, index.return = T)$ix])
-pt2_famNames_sorted <- famNames[sort.int(unlist(pt1_log2ObsExp), decreasing = T, index.return = T)$ix]
-pt2_famNamesPlot_sorted <- famNamesPlot[sort.int(unlist(pt1_log2ObsExp), decreasing = T, index.return = T)$ix]
+pt2_otherNames_sorted <- otherNames[sort.int(unlist(pt1_log2ObsExp), decreasing = T, index.return = T)$ix]
+pt2_otherNamesPlot_sorted <- otherNamesPlot[sort.int(unlist(pt1_log2ObsExp), decreasing = T, index.return = T)$ix]
 
 df <- data.frame(Sample = rep(c(pt1Name, pt2Name),
                               each = length(pt1_log2ObsExp_sorted)),
-                 Transposon_family = rep(pt1_famNamesPlot_sorted, 2),
+                 Annotation_feature = rep(pt1_otherNamesPlot_sorted, 2),
                  log2ObsExp = c(pt1_log2ObsExp_sorted,
                                 pt2_log2ObsExp_sorted),
                  log2alpha0.05 = c(pt1_log2alpha0.05_sorted, pt2_log2alpha0.05_sorted))
 
-df$Transposon_family <- factor(df$Transposon_family,
-                               levels = pt1_famNamesPlot_sorted)
+df$Annotation_feature <- factor(df$Annotation_feature,
+                                levels = pt1_otherNamesPlot_sorted)
 df$Sample <- factor(df$Sample,
                     levels = c(pt1Name, pt2Name))
 
 bp <- ggplot(data = df,
-             mapping = aes(x = Transposon_family,
+             mapping = aes(x = Annotation_feature,
                            y = log2ObsExp,
                            fill = Sample)) +
       geom_bar(stat = "identity",
@@ -151,10 +158,10 @@ bp <- ggplot(data = df,
                                    "dodgerblue3"),
                         labels = c(pt1Name,
                                    pt2Name)) +
-      geom_point(mapping = aes(Transposon_family, log2alpha0.05),
+      geom_point(mapping = aes(Annotation_feature, log2alpha0.05),
                  position = position_dodge(0.9),
-                 shape = "-", colour  = "red", size = 4.25) +
-      labs(x = "Transposon family",
+                 shape = "-", colour  = "red", size = 3.5) +
+      labs(x = "Annotation feature",
            y = expression("Log"[2]*"(observed:expected) peak overlap")) +
       theme_bw() +
       theme(axis.line.y = element_line(size = 0.5, colour = "black"),
@@ -167,13 +174,13 @@ bp <- ggplot(data = df,
             panel.background = element_blank(),
             plot.title = element_text(hjust = 0.5)) +
       ggtitle(paste0(dataName, " (", as.character(perms), " permutations)"))
-ggsave(paste0(plotDir, "barplot_TE_families_permTestResults_",
+ggsave(paste0(plotDir, "barplot_other_features_permTestResults_",
               as.character(perms), "perms_",
               "log2_Observed_Expected_", pt1LibName, "_", pt2LibName, "_peaks.pdf"),
        plot = bp,
        height = 4, width = 5)
 save(bp,
-     file = paste0(plotDir, "barplot_TE_families_permTestResults_",
+     file = paste0(plotDir, "barplot_other_features_permTestResults_",
                    as.character(perms), "perms_",
                   "log2_Observed_Expected_", pt1LibName, "_", pt2LibName, "_peaks.RData"))
 
