@@ -136,3 +136,7 @@ write.table(TEsCovBind,
             quote = F,
             row.names = F)
 
+log2_kss_wt_RNAseq_TE_meanCov <- log2((((TEsCovBind$kss_RNAseq_Rep1+TEsCovBind$kss_RNAseq_Rep2)/2)+1)/(((TEsCovBind$wt_RNAseq_Rep1+TEsCovBind$wt_RNAseq_Rep2)/2)+1))
+sum(log2_kss_wt_RNAseq_TE_meanCov >= 1)
+#[1] 609
+
