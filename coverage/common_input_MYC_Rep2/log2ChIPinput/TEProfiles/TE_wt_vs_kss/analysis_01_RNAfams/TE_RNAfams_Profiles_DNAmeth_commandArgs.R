@@ -3,7 +3,7 @@
 # Profile mean DNA methylation around TEs and random loci
 
 # Usage via Condor submission system on node7:
-# csmit -m 5G -c 1 "Rscript TE_RNAfams_Profiles_DNAmeth_commandArgs.R /home/meiosis/ajt200/BS_Seq/Stroud_2013/WT_rep2/wig/bed/GSM980986_WT_rep2_CG.wig.bed.gr.tab.bed CGmeth"
+# csmit -m 5G -c 1 "Rscript TE_RNAfams_Profiles_DNAmeth_commandArgs.R /home/ajt200/BS_Seq/Stroud_2013/WT_rep2/wig/bed/GSM980986_WT_rep2_CG.wig.bed.gr.tab.bed CGmeth"
 
 # Source functions to be used in this script
 source("/projects/ajt200/Rfunctions/covMatrix_DNAmethMatrix_target_ranLoc.R")
@@ -16,7 +16,7 @@ args <- commandArgs(trailingOnly = T)
 covDatPath <- as.character(args[1])
 libName <- as.character(args[2])
 
-matDir <- "/home/meiosis/ajt200/analysis/REC8_pooled/coverage/common_input_MYC_Rep2/log2ChIPinput/TEProfiles/TE_wt_vs_kss/analysis_01_RNAfams/matrices/"
+matDir <- "/home/ajt200/analysis/REC8_pooled/coverage/common_input_MYC_Rep2/log2ChIPinput/TEProfiles/TE_wt_vs_kss/analysis_01_RNAfams/matrices/"
 
 DNAfamNames <- c("dna", "heli", "ptmari", "mudr", "enspm", "hat", "harbinger")
 RNAfamNames <- c("rna", "gypsy", "copia", "linel1", "sine")
