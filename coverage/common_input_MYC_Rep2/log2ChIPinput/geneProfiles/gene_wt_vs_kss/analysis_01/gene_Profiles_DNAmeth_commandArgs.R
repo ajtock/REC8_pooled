@@ -3,7 +3,7 @@
 # Profile mean DNA methylation around genes and random loci
 
 # Usage via Condor submission system on node7:
-# csmit -m 20G -c 1 "Rscript gene_Profiles_DNAmeth_commandArgs.R /home/meiosis/ajt200/BS_Seq/Stroud_2013/WT_rep2/wig/bed/GSM980986_WT_rep2_CG.wig.bed.gr.tab.bed CGmeth"
+# csmit -m 20G -c 1 "Rscript gene_Profiles_DNAmeth_commandArgs.R /home/ajt200/BS_Seq/Stroud_2013/WT_rep2/wig/bed/GSM980986_WT_rep2_CG.wig.bed.gr.tab.bed CGmeth"
 
 # Source functions to be used in this script
 source("/projects/ajt200/Rfunctions/covMatrix_DNAmethMatrix_target_ranLoc.R")
@@ -16,7 +16,7 @@ args <- commandArgs(trailingOnly = T)
 covDatPath <- as.character(args[1])
 libName <- as.character(args[2])
 
-matDir <- "/home/meiosis/ajt200/analysis/REC8_pooled/coverage/common_input_MYC_Rep2/log2ChIPinput/geneProfiles/gene_wt_vs_kss/analysis_01/matrices/"
+matDir <- "/home/ajt200/analysis/REC8_pooled/coverage/common_input_MYC_Rep2/log2ChIPinput/geneProfiles/gene_wt_vs_kss/analysis_01/matrices/"
 
 # Chromosome definitions
 chrs <- c("Chr1","Chr2","Chr3","Chr4","Chr5")
