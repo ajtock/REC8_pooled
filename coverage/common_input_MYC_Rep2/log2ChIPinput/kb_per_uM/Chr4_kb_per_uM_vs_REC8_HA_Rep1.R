@@ -5,12 +5,12 @@ library(segmentSeq)
 
 chrs <- c("Chr1", "Chr2", "Chr3", "Chr4", "Chr5")
 
-inDir <- "/home/meiosis/ajt200/analysis/REC8_pooled/coverage/common_input_MYC_Rep2/log2ChIPinput/kb_per_uM/"
-plotDir <- "/home/meiosis/ajt200/analysis/REC8_pooled/coverage/common_input_MYC_Rep2/log2ChIPinput/kb_per_uM/plots/" 
+inDir <- "/home/ajt200/analysis/REC8_pooled/coverage/common_input_MYC_Rep2/log2ChIPinput/kb_per_uM/"
+plotDir <- "/home/ajt200/analysis/REC8_pooled/coverage/common_input_MYC_Rep2/log2ChIPinput/kb_per_uM/plots/" 
 targets <- read.table(paste0(inDir,
                              "kb_per_uM.txt"), header = T)
 
-covDir <- "/home/meiosis/ajt200/analysis/REC8_pooled/coverage/common_input_MYC_Rep2/log2ChIPinput/"
+covDir <- "/home/ajt200/analysis/REC8_pooled/coverage/common_input_MYC_Rep2/log2ChIPinput/"
 factor_norm <- read.table(paste0(covDir,
                                  "log2_REC8_HA_Rep1_ChIP_REC8_MYC_Rep2_input_norm_allchrs_coverage_coord_tab_Chr4.bed"),
                           colClasses = c(NA, NA, "NULL", NA))
@@ -37,6 +37,9 @@ factor_norm_targetMeanCov <- sapply(targetsOverlaps,
 factor_norm_targetSumCov <- sapply(targetsOverlaps,
                                    function(x) sum(chrCov[x]))
 chrTargets <- cbind(chrTargets, factor_norm_targetMeanCov, factor_norm_targetSumCov)
+write.table(chrTargets,
+            file = paste0(inDir, "Chr4_kb_per_uM_vs_mean_REC8_HA_Rep1_sum_REC8_HA_Rep1.txt"),
+            sep = "\t", quote = F, row.names = F)
 
 pdf(paste0(plotDir,
            "Chr4_kb_per_uM_vs_mean_REC8_HA_Rep1_sum_REC8_HA_Rep1.pdf"), height = 4, width = 8)
