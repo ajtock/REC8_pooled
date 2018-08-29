@@ -1,0 +1,4 @@
+SampleID,Condition,Replicate,bamReads,Peaks,PeakCaller
+wt_REC8_HA_Rep1,wt,1,reads/WT_REC8_HA_Rep1_ChIP.bam,WT_REC8_HA_Rep1.narrowPeak,narrow
+wt_REC8_HA_Rep2,wt,2,reads/WT_REC8_HA_Rep2_ChIP.bam,WT_REC8_HA_Rep2.narrowPeak,narrow
+kss_REC8_HA_Rep1,kss,1,reads/kss_REC8_HA_Rep1_ChIP.bam,kss_REC8_HA_Rep1.narrowPeak,narrow
