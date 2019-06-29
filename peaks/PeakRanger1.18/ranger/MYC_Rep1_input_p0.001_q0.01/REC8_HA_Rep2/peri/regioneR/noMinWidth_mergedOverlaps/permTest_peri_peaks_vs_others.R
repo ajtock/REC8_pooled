@@ -5,12 +5,14 @@
 # than expected by chance
 
 # Usage on hydrogen node7:
-# csmit -m 100G -c 32 "/applications/R/R-3.3.2/bin/Rscript permTest_peri_peaks_vs_others.R REC8_HA_Rep2_ChIP_rangerPeaksGR_peri_mergedOverlaps_noMinWidth.RData REC8_HA_Rep2_peri_peaks REC8_MYC_Rep1_ChIP_rangerPeaksGR_peri_mergedOverlaps_noMinWidth.RData REC8_MYC_Rep1_peri_peaks 10000"
+# csmit -m 100G -c 32 "/applications/R/R-3.3.2/bin/Rscript permTest_peri_peaks_vs_others.R REC8_HA_Rep2_ChIP_rangerPeaksGR_peri_mergedOverlaps_noMinWidth.RData REC8_HA_Rep2_peri_peaks REC8_MYC_Rep1_ChIP_rangerPeaksGR_peri_mergedOverlaps_noMinWidth.RData REC8_MYC_Rep1_peri_peaks REC8_HA_Rep1_ChIP_rangerPeaksGR_peri_mergedOverlaps_noMinWidth.RData REC8_HA_Rep1_peri_peaks 10000"
 
 #peakFile1 <- "REC8_HA_Rep2_ChIP_rangerPeaksGR_peri_mergedOverlaps_noMinWidth.RData"
 #peakName1 <- "REC8_HA_Rep2_peri_peaks"
 #peakFile2 <- "REC8_MYC_Rep1_ChIP_rangerPeaksGR_peri_mergedOverlaps_noMinWidth.RData"
 #peakName2 <- "REC8_MYC_Rep1_peri_peaks"
+#peakFile3 <- "REC8_HA_Rep1_ChIP_rangerPeaksGR_peri_mergedOverlaps_noMinWidth.RData"
+#peakName3 <- "REC8_HA_Rep1_peri_peaks"
 #perms <- 10000
 
 args <- commandArgs(trailingOnly = T)
@@ -18,7 +20,9 @@ peakFile1 <- args[1]
 peakName1 <- args[2]
 peakFile2 <- args[3]
 peakName2 <- args[4]
-perms <- as.numeric(args[5])
+peakFile3 <- args[5]
+peakName3 <- args[6]
+perms <- as.numeric(args[7])
 
 library(regioneR)
 
@@ -60,6 +64,15 @@ print("***********REC8_MYC_Rep1_peaks***********")
 print(REC8_MYC_Rep1GR)
 print(length(REC8_MYC_Rep1GR))
 
+load(paste0(inDir,
+            peakFile3))
+REC8_HA_Rep1GR <- rangerPeaksGR_peri_mergedOverlaps
+rangerPeaksGR_peri_mergedOverlaps <- NULL
+strand(REC8_HA_Rep1GR) <- "*"
+print("***********REC8_HA_Rep1_peaks***********")
+print(REC8_HA_Rep1GR)
+print(length(REC8_HA_Rep1GR))
+
 load("/projects/ajt200/REC8_MSH4/nuc_peaks/log2ChIPinput/nucleR/trim/analysis_01/periPeaksSH99GRmerge.RData")
 nucleRnucsGR <- periPeaksSH99GRmerge
 periPeaksSH99GRmerge <- NULL
@@ -98,11 +111,12 @@ rangerPeaksGR_peri_mergedOverlaps <- NULL
 strand(H3K4me3_ChIP15GR) <- "*"
 print(length(H3K4me3_ChIP15GR))
 
-load("/projects/ajt200/BAM_masters/H3K9me2/WT/peaks/PeakRanger1.18/ranger/p0.05_q0.05/WT_H3K9me2_ChIP_perirangerPeaksGRmergedOverlaps_minuslog10_p0.05_q0.05_noMinWidth.RData")
-H3K9me2GR <- perirangerPeaksGRmergedOverlaps
-perirangerPeaksGRmergedOverlaps <- NULL
+load("/projects/ajt200/BAM_masters/H3K9me2/WT/peaks/PeakRanger1.18/ranger/REC8_MYC_Rep1_input_p0.05_q0.05/WT_H3K9me2_ChIP_rangerPeaksGR_peri_mergedOverlaps_noMinWidth.RData")
+H3K9me2GR <- rangerPeaksGR_peri_mergedOverlaps
+rangerPeaksGR_peri_mergedOverlaps <- NULL
 strand(H3K9me2GR) <- "*"
 print(length(H3K9me2GR))
+#[1] 2475
 
 load("/home/ajt200/analysis/170920_Chris_ChIP_REC8_histone/fastq_pooled/H3K4me1/peaks/PeakRanger1.18/ranger/H3K9me2_input_p0.05_q0.05/WT_H3K4me1_ChIP_rangerPeaksGR_peri_mergedOverlaps_noMinWidth.RData")
 H3K4me1GR <- rangerPeaksGR_peri_mergedOverlaps
@@ -131,7 +145,7 @@ print(length(H3K27me3GR))
 load("/projects/ajt200/GBS_CO/HS_CU_080617/wt/COsGRcoords.RData")
 COsGR <- COsGRcoords
 print(length(COsGR))
-# Remove COs located within pericentromeric regions
+# Remove COs located within arm regions
 maskCOsOverlaps <- findOverlaps(query = mask,
                                 subject = COsGR,
                                 ignore.strand = TRUE,
@@ -147,7 +161,7 @@ genesGR <- GRanges(seqnames = genes$chr,
                                     strand = "*")
 seqlevels(genesGR) <- sub("", "Chr", seqlevels(genesGR))
 print(length(genesGR))
-# Remove genes located within pericentromeric regions
+# Remove genes located within arm regions
 maskgenesOverlaps <- findOverlaps(query = mask,
                                   subject = genesGR,
                                   ignore.strand = TRUE,
@@ -163,7 +177,7 @@ promotersGR <- promoters(genesGRprom, upstream = 500, downstream = 0)
 seqlevels(promotersGR) <- sub("", "Chr", seqlevels(promotersGR))
 strand(promotersGR) <- "*"
 print(length(promotersGR))
-# Remove promoters located within pericentromeric regions
+# Remove promoters located within arm regions
 maskpromotersOverlaps <- findOverlaps(query = mask,
                                       subject = promotersGR,
                                       ignore.strand = TRUE,
@@ -175,7 +189,7 @@ TSSdownstream500GR <- promoters(genesGRprom, upstream = 0, downstream = 500)
 seqlevels(TSSdownstream500GR) <- sub("", "Chr", seqlevels(TSSdownstream500GR))
 strand(TSSdownstream500GR) <- "*"
 print(length(TSSdownstream500GR))
-# Remove TSSdownstream500 located within pericentromeric regions
+# Remove TSSdownstream500 located within arm regions
 maskTSSdownstreamOverlaps <- findOverlaps(query = mask,
                                           subject = TSSdownstream500GR,
                                           ignore.strand = TRUE,
@@ -192,7 +206,7 @@ terminatorsGR <- TTSplus(genesGRterm, upstream = -1, downstream = 500)
 seqlevels(terminatorsGR) <- sub("", "Chr", seqlevels(terminatorsGR))
 strand(terminatorsGR) <- "*"
 print(length(terminatorsGR))
-# Remove terminators located within pericentromeric regions
+# Remove terminators located within arm regions
 maskterminatorsOverlaps <- findOverlaps(query = mask,
                                         subject = terminatorsGR,
                                         ignore.strand = TRUE,
@@ -204,7 +218,7 @@ TTSupstream500GR <- TTSplus(genesGRterm, upstream = 499, downstream = 0)
 seqlevels(TTSupstream500GR) <- sub("", "Chr", seqlevels(TTSupstream500GR))
 strand(TTSupstream500GR) <- "*"
 print(length(TTSupstream500GR))
-# Remove TTSupstream500 located within pericentromeric regions
+# Remove TTSupstream500 located within arm regions
 maskTTSupstreamOverlaps <- findOverlaps(query = mask,
                                         subject = TTSupstream500GR,
                                         ignore.strand = TRUE,
@@ -221,7 +235,7 @@ exonsGR <- GRanges(seqnames = exons$chr,
                    ranges = IRanges(start = exons$start, end = exons$end),
                    strand = "*")
 print(length(exonsGR))
-# Remove exons located within pericentromeric regions
+# Remove exons located within arm regions
 maskexonsOverlaps <- findOverlaps(query = mask,
                                   subject = exonsGR,
                                   ignore.strand = TRUE,
@@ -242,7 +256,7 @@ intronsMinusGR <- GRanges(seqnames = paste0("Chr", intronsMinus$chr),
                           strand = "*")
 intronsGR <- sort(append(intronsPlusGR, intronsMinusGR), by = ~ seqnames + start + end)
 print(length(intronsGR))
-# Remove introns located within pericentromeric regions
+# Remove introns located within arm regions
 maskintronsOverlaps <- findOverlaps(query = mask,
                                     subject = intronsGR,
                                     ignore.strand = TRUE,
@@ -253,7 +267,7 @@ print(length(intronsGR))
 TEs <- read.table(file = "/projects/ajt200/TAIR10/TAIR10_Buisine_TEs_strand_tab_ann.txt", header=T)
 TEsGR <- GRanges(seqnames = TEs$Chr, ranges = IRanges(start = TEs$start, end = TEs$end), strand = "*")
 print(length(TEsGR))
-# Remove TEs located within pericentromeric regions
+# Remove TEs located within arm regions
 maskTEsOverlaps <- findOverlaps(query = mask, 
                                 subject = TEsGR,
                                 ignore.strand = TRUE,
@@ -288,6 +302,7 @@ kss_hypoCHH_DMRsGR <- kss_hypoCHH_DMRsGR[-subjectHits(mask_kss_hypoCHH_DMRsOverl
 print(length(kss_hypoCHH_DMRsGR))
 
 otherNames <- c("REC8_MYC_Rep1GR",
+                "REC8_HA_Rep1GR",
                 "nucleRnucsGR",
                 "SPO11GR",
                 "SPO11_ChIP4GR",
@@ -312,6 +327,7 @@ otherNames <- c("REC8_MYC_Rep1GR",
                 "kss_hypoCHH_DMRsGR")
 
 grl <- c("REC8_MYC_Rep1GR" = REC8_MYC_Rep1GR,
+         "REC8_HA_Rep1GR" = REC8_HA_Rep1GR,
          "nucleRnucsGR" = nucleRnucsGR,
          "SPO11GR" = SPO11GR,
          "SPO11_ChIP4GR" = SPO11_ChIP4GR,
