@@ -5,12 +5,14 @@
 # than expected by chance
 
 # Usage on hydrogen node7:
-# csmit -m 100G -c 32 "/applications/R/R-3.3.2/bin/Rscript permTest_arm_peaks_vs_others.R REC8_HA_Rep2_ChIP_rangerPeaksGR_arm_mergedOverlaps_noMinWidth.RData REC8_HA_Rep2_arm_peaks REC8_MYC_Rep1_ChIP_rangerPeaksGR_arm_mergedOverlaps_noMinWidth.RData REC8_MYC_Rep1_arm_peaks 10000"
+# csmit -m 100G -c 32 "/applications/R/R-3.3.2/bin/Rscript permTest_arm_peaks_vs_others.R REC8_HA_Rep2_ChIP_rangerPeaksGR_arm_mergedOverlaps_noMinWidth.RData REC8_HA_Rep2_arm_peaks REC8_MYC_Rep1_ChIP_rangerPeaksGR_arm_mergedOverlaps_noMinWidth.RData REC8_MYC_Rep1_arm_peaks REC8_HA_Rep1_ChIP_rangerPeaksGR_arm_mergedOverlaps_noMinWidth.RData REC8_HA_Rep1_arm_peaks 10000"
 
 #peakFile1 <- "REC8_HA_Rep2_ChIP_rangerPeaksGR_arm_mergedOverlaps_noMinWidth.RData"
 #peakName1 <- "REC8_HA_Rep2_arm_peaks"
 #peakFile2 <- "REC8_MYC_Rep1_ChIP_rangerPeaksGR_arm_mergedOverlaps_noMinWidth.RData"
 #peakName2 <- "REC8_MYC_Rep1_arm_peaks"
+#peakFile3 <- "REC8_HA_Rep1_ChIP_rangerPeaksGR_arm_mergedOverlaps_noMinWidth.RData"
+#peakName3 <- "REC8_HA_Rep1_arm_peaks"
 #perms <- 10000
 
 args <- commandArgs(trailingOnly = T)
@@ -18,7 +20,9 @@ peakFile1 <- args[1]
 peakName1 <- args[2]
 peakFile2 <- args[3]
 peakName2 <- args[4]
-perms <- as.numeric(args[5])
+peakFile3 <- args[5]
+peakName3 <- args[6]
+perms <- as.numeric(args[7])
 
 library(regioneR)
 
@@ -57,6 +61,15 @@ strand(REC8_MYC_Rep1GR) <- "*"
 print("***********REC8_MYC_Rep1_peaks***********")
 print(REC8_MYC_Rep1GR)
 print(length(REC8_MYC_Rep1GR))
+
+load(paste0(inDir,
+            peakFile3))
+REC8_HA_Rep1GR <- rangerPeaksGR_arm_mergedOverlaps
+rangerPeaksGR_arm_mergedOverlaps <- NULL
+strand(REC8_HA_Rep1GR) <- "*"
+print("***********REC8_HA_Rep1_peaks***********")
+print(REC8_HA_Rep1GR)
+print(length(REC8_HA_Rep1GR))
 
 load("/projects/ajt200/REC8_MSH4/nuc_peaks/log2ChIPinput/nucleR/trim/analysis_01/armPeaksSH99GRmerge.RData")
 nucleRnucsGR <- armPeaksSH99GRmerge
@@ -100,12 +113,12 @@ strand(H3K4me3_ChIP15GR) <- "*"
 print(length(H3K4me3_ChIP15GR))
 #[1] 17101
 
-load("/projects/ajt200/BAM_masters/H3K9me2/WT/peaks/PeakRanger1.18/ranger/p0.05_q0.05/WT_H3K9me2_ChIP_armrangerPeaksGRmergedOverlaps_minuslog10_p0.05_q0.05_noMinWidth.RData")
-H3K9me2GR <- armrangerPeaksGRmergedOverlaps
-armrangerPeaksGRmergedOverlaps <- NULL
+load("/projects/ajt200/BAM_masters/H3K9me2/WT/peaks/PeakRanger1.18/ranger/REC8_MYC_Rep1_input_p0.05_q0.05/WT_H3K9me2_ChIP_rangerPeaksGR_arm_mergedOverlaps_noMinWidth.RData")
+H3K9me2GR <- rangerPeaksGR_arm_mergedOverlaps
+rangerPeaksGR_arm_mergedOverlaps <- NULL
 strand(H3K9me2GR) <- "*"
 print(length(H3K9me2GR))
-#[1] 12234
+#[1] 327
 
 load("/home/ajt200/analysis/170920_Chris_ChIP_REC8_histone/fastq_pooled/H3K4me1/peaks/PeakRanger1.18/ranger/H3K9me2_input_p0.05_q0.05/WT_H3K4me1_ChIP_rangerPeaksGR_arm_mergedOverlaps_noMinWidth.RData")
 H3K4me1GR <- rangerPeaksGR_arm_mergedOverlaps
@@ -138,7 +151,6 @@ print(length(H3K27me3GR))
 load("/projects/ajt200/GBS_CO/HS_CU_080617/wt/COsGRcoords.RData")
 COsGR <- COsGRcoords
 print(length(COsGR))
-#[1] 3320
 # Remove COs located within pericentromeric regions
 maskCOsOverlaps <- findOverlaps(query = mask,
                                 subject = COsGR,
@@ -146,7 +158,6 @@ maskCOsOverlaps <- findOverlaps(query = mask,
                                 select = "all")
 COsGR <- COsGR[-subjectHits(maskCOsOverlaps)]
 print(length(COsGR))
-#[1] 2452
 
 genes <- read.table("/projects/ajt200/TAIR10/representative_genes/representative_genes_uniq_fmt_strand.txt",
                     header = T)
@@ -315,6 +326,7 @@ print(length(kss_hypoCHH_DMRsGR))
 #[1] 1918
 
 otherNames <- c("REC8_MYC_Rep1GR",
+                "REC8_HA_Rep1GR",
                 "nucleRnucsGR",
                 "SPO11GR",
                 "SPO11_ChIP4GR",
@@ -339,6 +351,7 @@ otherNames <- c("REC8_MYC_Rep1GR",
                 "kss_hypoCHH_DMRsGR")
 
 grl <- c("REC8_MYC_Rep1GR" = REC8_MYC_Rep1GR,
+         "REC8_HA_Rep1GR" = REC8_HA_Rep1GR,
          "nucleRnucsGR" = nucleRnucsGR,
          "SPO11GR" = SPO11GR,
          "SPO11_ChIP4GR" = SPO11_ChIP4GR,
