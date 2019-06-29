@@ -3,9 +3,9 @@
 # Plot heatmaps of features sorted by coverage levels between start and end sites
 
 # Usage:
-# /applications/R/R-3.4.0/bin/Rscript features_heatmap_sorted.R REC8_MYC_Rep1 kss_hypoCHG_DMRs 2000 2kb '2 kb' 20 20bp bodies
+# /applications/R/R-3.4.0/bin/Rscript features_heatmap_sorted.R REC8_HA_Rep2 kss_hypoCHG_DMRs 2000 2kb '2 kb' 20 20bp bodies
 
-#libName <- "REC8_MYC_Rep1"
+#libName <- "REC8_HA_Rep2"
 #featureName <- "kss_hypoCHG_DMRs"
 #upstream <- 2000
 #downstream <- 2000
@@ -51,41 +51,20 @@ ChIPseqNames <- c(
                   "control_MYC_Rep1",
                   "control_HA_Rep1",
                   "MNase",
-                  "SPO11_1_ChIP4",
-                  "SPO11_1_ChIP13",
                   "H3K9me2",
                   "kss_H3K9me2",
                   "cmt3_H3K9me2",
-                  "H3K27me1",
-                  "H3K27me3",
-                  "H3K27me3_SRR1509478",
-                  "H2AW",
-                  "H2A",
-                  "H2AX",
-                  "H2AZ",
-                  "H3K4me1",
-                  "H3K4me2",
-                  "H3K4me3_ChIP14",
-                  "H3K4me3_ChIP15",
                   "SPO11_1_oligos_RPI1",
                   "SPO11_1_oligos_RPI3",
                   "SPO11_1_oligos_RPI8",
                   "kss_SPO11_1_oligos_RPI34",
-                  "kss_SPO11_1_oligos_RPI35",
-                  "PolIV_Rep2",
-                  "PolV"
+                  "kss_SPO11_1_oligos_RPI35"
              )
 RNAseqNames <- c( 
                  "WT_RNAseq_Chris_Rep1",
                  "WT_RNAseq_Chris_Rep2",
                  "kss_RNAseq_Chris_Rep1",
-                 "kss_RNAseq_Chris_Rep2",
-                 "WT_RNAseq_Kyuha_Rep1",
-                 "WT_RNAseq_Kyuha_Rep2",
-                 "WT_RNAseq_Kyuha_Rep3",
-                 "WT_RNAseq_meiocyte_Rep1",
-                 "WT_RNAseq_meiocyte_Rep2",
-                 "WT_RNAseq_meiocyte_Rep3"
+                 "kss_RNAseq_Chris_Rep2"
                 )
 methNames <- c(
                "mCG",
@@ -107,41 +86,20 @@ ChIPseqNamesPlot <- c(
                       "Control-Myc",
                       "Control-HA",
                       "MNase",
-                      "SPO11-1 ChIP Rep1",
-                      "SPO11-1 ChIP Rep2",
                       "H3K9me2",
                       "kss H3K9me2",
                       "cmt3 H3K9me2",
-                      "H3K27me1",
-                      "H3K27me3",
-                      "H3K27me3 (SRR1509478)",
-                      "H2A.W",
-                      "H2A",
-                      "H2A.X",
-                      "H2A.Z",
-                      "H3K4me1",
-                      "H3K4me2",
-                      "H3K4me3 Rep2",
-                      "H3K4me3 Rep3",
                       "SPO11-1-oligos Rep1",
                       "SPO11-1-oligos Rep2",
                       "SPO11-1-oligos Rep3",
                       "kss SPO11-1-oligos Rep1",
-                      "kss SPO11-1-oligos Rep2",
-                      "Pol IV",
-                      "Pol V"
+                      "kss SPO11-1-oligos Rep2"
                  )
 RNAseqNamesPlot <- c(
                      "RNA-seq (floral; Chris) Rep1",
                      "RNA-seq (floral; Chris) Rep2",
                      "kss RNA-seq (floral; Chris) Rep1",
-                     "kss RNA-seq (floral; Chris) Rep2",
-                     "RNA-seq (floral; Kyuha) Rep1",
-                     "RNA-seq (floral; Kyuha) Rep2",
-                     "RNA-seq (floral; Kyuha) Rep3",
-                     "RNA-seq (meiocyte) Rep1",
-                     "RNA-seq (meiocyte) Rep2",
-                     "RNA-seq (meiocyte) Rep3"
+                     "kss RNA-seq (floral; Chris) Rep2"
                     )
 methNamesPlot <- c(
                    "mCG",
@@ -368,9 +326,7 @@ foreach(x = 1:length(RNAseqNames)) %dopar% {
 }
 # DNA methylation
 foreach(x = 1:length(methNames)) %dopar% {
-  meth_col_fun <- colorRamp2(quantile(methSorted[[x]],
-                                      c(0.5, 0.6, 0.7, 0.8, 0.9, 0.95),
-                                      na.rm = T),
+  meth_col_fun <- colorRamp2(c(0.0, 0.2, 0.4, 0.6, 0.8, 1.0),
                              rich8to6equal)
   pdf(paste0(plotDir, methNames[x], "_around_", featureName,
              "_heatmap_ordered_by_", libName, "_in_", region, ".pdf"),

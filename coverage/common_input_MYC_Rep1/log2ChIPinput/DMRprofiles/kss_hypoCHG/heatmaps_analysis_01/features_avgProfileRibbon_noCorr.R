@@ -9,7 +9,7 @@
 # REC8: 'red,red4'
 # SPO11-1-oligos: 'dodgerblue2,navy'
 # H3K9me2: 'green2,darkgreen'
-# mC*: 'goldenrod2,goldenrod4'
+# mC*: 'orange,orange4'
 
 #featureName <- "HypoCHG_DMRs_kss"
 #featureNamePlot <- "HypoCHG DMRs"
