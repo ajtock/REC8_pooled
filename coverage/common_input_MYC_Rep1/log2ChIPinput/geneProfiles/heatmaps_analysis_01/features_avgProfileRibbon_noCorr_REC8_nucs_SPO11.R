@@ -1,9 +1,9 @@
 #!/applications/R/R-3.5.0/bin/Rscript
 
-# Plot heatmaps of features sorted by coverage levels between start and end sites
+# Plot feature average coverage profiles with 95% CIs
 
 # Usage:
-# /applications/R/R-3.5.0/bin/Rscript features_avgProfileRibbon_DNAmeth_noCorr.R HypoCHG_DMRs_kss 'HypoCHG DMRs' 2000 2kb '2 kb' 20 20bp 'mCHG,kss_mCHG' 'wt mCHG,kss mCHG' 'orange,orange4' '0.02,0.50'
+# /applications/R/R-3.5.0/bin/Rscript features_avgProfileRibbon_noCorr_REC8_nucs_SPO11.R Genes 'Genes' 2000 2kb '2 kb' 20 20bp 'REC8_HA_Rep2,MNase,SPO11_1_oligos_RPI1' 'REC8-HA,Nucleosomes,SPO11-1' 'red,purple4,dodgerblue2' '0.69,0.30'
 
 # wt,kss colours
 # REC8: 'red,red4'
@@ -11,19 +11,19 @@
 # H3K9me2: 'green2,darkgreen'
 # mC*: 'orange,orange4'
 
-#featureName <- "HypoCHG_DMRs_kss"
-#featureNamePlot <- "HypoCHG DMRs"
+#featureName <- "Genes"
+#featureNamePlot <- "Genes"
 #upstream <- 2000
 #downstream <- 2000
 #flankName <- "2kb"
 #flankNamePlot <- "2 kb"
 #binSize <- 20
 #binName <- "20bp"
-#libNames <- unlist(strsplit("mCHG,kss_mCHG",
+#libNames <- unlist(strsplit("REC8_HA_Rep2,SPO11_1_oligos_RPI1,MNase,H3K9me2",
 #                            split = ","))
-#libNamesPlot <- unlist(strsplit("wt mCHG,kss mCHG",
+#libNamesPlot <- unlist(strsplit("REC8-HA,SPO11-1,Nucleosomes,H3K9me2",
 #                                split = ","))
-#colours <- unlist(strsplit("orange,orange4",
+#colours <- unlist(strsplit("red,dodgerblue2,aquamarine,green2",
 #                           split = ","))
 ### Custom annotation legends using textGrob()
 ## top left
@@ -40,6 +40,9 @@
 #                                        split = ",")))
 ## middle right
 #legendPos <- as.numeric(unlist(strsplit("0.70,0.54",
+#                                        split = ",")))
+## bottom left
+#legendPos <- as.numeric(unlist(strsplit("0.02,0.30",
 #                                        split = ",")))
 
 ### ggplot2 legends
@@ -136,12 +139,10 @@ summaryDFfeature_list  <- mclapply(seq_along(tidyDFfeature_list), function(x) {
                              FUN   = length),
              mean   = tapply(X     = tidyDFfeature_list[[x]]$coverage,
                              INDEX = tidyDFfeature_list[[x]]$window,
-                             FUN   = mean,
-                             na.rm = TRUE),
+                             FUN   = mean),
              sd     = tapply(X     = tidyDFfeature_list[[x]]$coverage,
                              INDEX = tidyDFfeature_list[[x]]$window,
-                             FUN   = sd,
-                             na.rm = TRUE))
+                             FUN   = sd))
 }, mc.cores = length(tidyDFfeature_list))
 
 for(x in seq_along(summaryDFfeature_list)) {
@@ -200,12 +201,10 @@ summaryDFranLoc_list  <- mclapply(seq_along(tidyDFranLoc_list), function(x) {
                              FUN   = length),
              mean   = tapply(X     = tidyDFranLoc_list[[x]]$coverage,
                              INDEX = tidyDFranLoc_list[[x]]$window,
-                             FUN   = mean,
-                             na.rm = TRUE),
+                             FUN   = mean),
              sd     = tapply(X     = tidyDFranLoc_list[[x]]$coverage,
                              INDEX = tidyDFranLoc_list[[x]]$window,
-                             FUN   = sd,
-                             na.rm = TRUE))
+                             FUN   = sd))
 }, mc.cores = length(tidyDFranLoc_list))
 
 for(x in seq_along(summaryDFranLoc_list)) {
@@ -243,6 +242,8 @@ ymin <- min(c(summaryDFfeature$CI_lower,
               summaryDFranLoc$CI_lower))
 ymax <- max(c(summaryDFfeature$CI_upper,
               summaryDFranLoc$CI_upper))
+#ymin <- -0.8
+#ymax <- 0.6
 
 # Function for formatting y-axis labels
 # with a given number of decimals
@@ -251,15 +252,11 @@ fmt_decimals <- function(decimals) {
 }
 
 # Define legend labels
-legendLab1 <- grobTree(textGrob(bquote(.(libNamesPlot[1])),
-                                x = legendPos[1], y = legendPos[2], just = "left",
-                                gp = gpar(col = colours[1], fontsize = 18))) 
-legendLab2 <- grobTree(textGrob(bquote(italic(.(unlist(strsplit(libNamesPlot[2],
-                                                                split = " "))[1])) ~
-                                       .(unlist(strsplit(libNamesPlot[2],
-                                                         split = " "))[2])),
-                                x = legendPos[1], y = legendPos[2]-0.1, just = "left",
-                                gp = gpar(col = colours[2], fontsize = 18)))
+legendLabs <- lapply(seq_along(libNamesPlot), function(x) {
+  grobTree(textGrob(bquote(.(libNamesPlot[x])),
+                    x = legendPos[1], y = legendPos[2]-((x-1)*0.08), just = "left",
+                    gp = gpar(col = colours[x], fontsize = 18))) 
+})
 
 # Plot average coverage profiles with 95% CI ribbon
 ## feature
@@ -297,9 +294,10 @@ ggObj1 <- ggplot(data = summaryDFfeature,
              linetype = "dashed",
              size = 1) +
   labs(x = "",
-       y = "DNA methylation") +
-  annotation_custom(legendLab1) +
-  annotation_custom(legendLab2) +
+       y = expression("Z-standardized log"[2]*"(ChIP/input)")) +
+  annotation_custom(legendLabs[[1]]) +
+  annotation_custom(legendLabs[[2]]) +
+  annotation_custom(legendLabs[[3]]) +
   theme_bw() +
   theme(
         axis.ticks = element_line(size = 1.0, colour = "black"),
@@ -357,8 +355,9 @@ ggObj2 <- ggplot(data = summaryDFranLoc,
              size = 1) +
   labs(x = "",
        y = "") +
-  annotation_custom(legendLab1) +
-  annotation_custom(legendLab2) +
+  annotation_custom(legendLabs[[1]]) +
+  annotation_custom(legendLabs[[2]]) +
+  annotation_custom(legendLabs[[3]]) +
   theme_bw() +
   theme(
         axis.ticks = element_line(size = 1.0, colour = "black"),
