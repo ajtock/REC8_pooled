@@ -34,16 +34,15 @@ pericenEnd <- c(18480000, 7540000, 16860000, 6850000, 15650000)
 genome <- toGRanges(data.frame(chrs, chrStart, chrLens))
 
 # Import peaks as GRanges object
-load(paste0("/projects/ajt200/BAM_masters/H3K9me2/WT/peaks/PeakRanger1.18/ranger/p0.05_q0.05/",
-            "WT_H3K9me2_ChIP_armrangerPeaksGRmergedOverlaps_minuslog10_p0.05_q0.05_noMinWidth.RData"))
-load(paste0("/projects/ajt200/BAM_masters/H3K9me2/WT/peaks/PeakRanger1.18/ranger/p0.05_q0.05/",
-            "WT_H3K9me2_ChIP_perirangerPeaksGRmergedOverlaps_minuslog10_p0.05_q0.05_noMinWidth.RData"))
-peaksGR <- sort(c(armrangerPeaksGRmergedOverlaps, perirangerPeaksGRmergedOverlaps))
-armrangerPeaksGRmergedOverlaps <- NULL
-perirangerPeaksGRmergedOverlaps <- NULL
+load(paste0("/projects/ajt200/BAM_masters/H3K9me2/WT/peaks/PeakRanger1.18/ranger/REC8_MYC_Rep1_input_p0.05_q0.05/",
+            "WT_H3K9me2_ChIP_rangerPeaksGR_arm_mergedOverlaps_noMinWidth.RData"))
+load(paste0("/projects/ajt200/BAM_masters/H3K9me2/WT/peaks/PeakRanger1.18/ranger/REC8_MYC_Rep1_input_p0.05_q0.05/",
+            "WT_H3K9me2_ChIP_rangerPeaksGR_peri_mergedOverlaps_noMinWidth.RData"))
+peaksGR <- sort(c(rangerPeaksGR_arm_mergedOverlaps, rangerPeaksGR_peri_mergedOverlaps))
+rangerPeaksGR_arm_mergedOverlaps <- NULL
+rangerPeaksGR_peri_mergedOverlaps <- NULL
 strand(peaksGR) <- "*"
 print(length(peaksGR))
-#[1] 20289
 # Generate GRanges object containing random loci of same number
 # and size distribution as peaksGR
 set.seed(374592)

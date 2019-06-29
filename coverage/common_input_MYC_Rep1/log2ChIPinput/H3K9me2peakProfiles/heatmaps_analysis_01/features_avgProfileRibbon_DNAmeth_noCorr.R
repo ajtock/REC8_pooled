@@ -3,13 +3,13 @@
 # Plot heatmaps of features sorted by coverage levels between start and end sites
 
 # Usage:
-# /applications/R/R-3.5.0/bin/Rscript features_avgProfileRibbon_DNAmeth_noCorr.R HypoCHG_DMRs_kss 'HypoCHG DMRs' 2000 2kb '2 kb' 20 20bp 'mCHG,kss_mCHG' 'wt mCHG,kss mCHG' 'darkgoldenrod3,darkgoldenrod4' '0.02,0.50'
+# /applications/R/R-3.5.0/bin/Rscript features_avgProfileRibbon_DNAmeth_noCorr.R HypoCHG_DMRs_kss 'HypoCHG DMRs' 2000 2kb '2 kb' 20 20bp 'mCHG,kss_mCHG' 'wt mCHG,kss mCHG' 'orange,orange4' '0.02,0.50'
 
 # wt,kss colours
 # REC8: 'red,red4'
 # SPO11-1-oligos: 'dodgerblue2,navy'
 # H3K9me2: 'green2,darkgreen'
-# mC*: 'darkgoldenrod3,darkgoldenrod4'
+# mC*: 'orange,orange4'
 
 #featureName <- "HypoCHG_DMRs_kss"
 #featureNamePlot <- "HypoCHG DMRs"
@@ -23,7 +23,7 @@
 #                            split = ","))
 #libNamesPlot <- unlist(strsplit("wt mCHG,kss mCHG",
 #                                split = ","))
-#colours <- unlist(strsplit("darkgoldenrod3,darkgoldenrod4",
+#colours <- unlist(strsplit("orange,orange4",
 #                           split = ","))
 ### Custom annotation legends using textGrob()
 ## top left
