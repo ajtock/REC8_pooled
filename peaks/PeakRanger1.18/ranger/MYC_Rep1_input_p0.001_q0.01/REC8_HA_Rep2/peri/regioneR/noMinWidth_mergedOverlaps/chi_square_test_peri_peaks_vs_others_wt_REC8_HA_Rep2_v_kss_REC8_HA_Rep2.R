@@ -3,16 +3,16 @@
 # Compare proportions of wt and kss peaks overlapping features using chi-square tests of independence
 
 # Usage: 
-# /applications/R/R-3.5.0/bin/Rscript chi_square_test_peri_peaks_vs_others_kssMYCinput.R REC8_HA_Rep2_ChIP_rangerPeaksGR_peri_mergedOverlaps_noMinWidth.RData kss_REC8_HA_Rep1_ChIP_rangerPeaksGR_peri_mergedOverlaps_noMinWidth.RData "wt REC8-HA_Rep2" "kss REC8-HA_Rep1" "wt SPO11-1" "kss SPO11-1" REC8_HA_Rep2 kss_REC8_HA_Rep1 wt_SPO11oligo kss_SPO11oligo "Pericentromeric REC8-HA peaks and SPO11-1-oligo hotspots" peri
+# /applications/R/R-3.5.0/bin/Rscript chi_square_test_peri_peaks_vs_others_wt_REC8_HA_Rep2_v_kss_REC8_HA_Rep2.R REC8_HA_Rep2_ChIP_rangerPeaksGR_peri_mergedOverlaps_noMinWidth.RData kss_REC8_HA_Rep2_ChIP_rangerPeaksGR_peri_mergedOverlaps_noMinWidth.RData "wt REC8-HA_Rep2" "kss REC8-HA_Rep2" "wt SPO11-1" "kss SPO11-1" REC8_HA_Rep2 kss_REC8_HA_Rep2 wt_SPO11oligo kss_SPO11oligo "Pericentromeric REC8-HA peaks and SPO11-1-oligo hotspots" peri
 
 #peakFile1 <- "REC8_HA_Rep2_ChIP_rangerPeaksGR_peri_mergedOverlaps_noMinWidth.RData"
-#peakFile2 <- "kss_REC8_HA_Rep1_ChIP_rangerPeaksGR_peri_mergedOverlaps_noMinWidth.RData"
+#peakFile2 <- "kss_REC8_HA_Rep2_ChIP_rangerPeaksGR_peri_mergedOverlaps_noMinWidth.RData"
 #peakName1 <- "wt REC8-HA_Rep2"
-#peakName2 <- "kss REC8-HA_Rep1"
+#peakName2 <- "kss REC8-HA_Rep2"
 #peakName3 <- "wt SPO11-1"
 #peakName4 <- "kss SPO11-1"
 #peakLibName1 <- "REC8_HA_Rep2"
-#peakLibName2 <- "kss_REC8_HA_Rep1"
+#peakLibName2 <- "kss_REC8_HA_Rep2"
 #peakLibName3 <- "wt_SPO11oligo"
 #peakLibName4 <- "kss_SPO11oligo"
 #plotTitle <- "Pericentromeric REC8-HA peaks and SPO11-1-oligo hotspots"
@@ -67,12 +67,12 @@ print(wtREC8GR)
 print(length(wtREC8GR))
 
 # kss REC8 peaks
-load(paste0("/home/ajt200/analysis/180622_Chris_lambing_ChIP_REC8_HA_Col_kss/kss/peaks/PeakRanger1.18/ranger/MYC_Rep1_input_p0.001_q0.01/",
+load(paste0("/home/ajt200/analysis/180830_Chris_lambing_ChIP_rec8HA_kss_rep2/peaks/PeakRanger1.18/ranger/kss_REC8_HA_Rep1_input_p0.001_q0.01/",
             peakFile2))
 kssREC8GR <- rangerPeaksGR_peri_mergedOverlaps
 rangerPeaksGR_peri_mergedOverlaps <- NULL
 strand(kssREC8GR) <- "*"
-print("***********kss_REC8_HA_Rep1_peaks***********")
+print("***********kss_REC8_HA_Rep2_peaks***********")
 print(kssREC8GR)
 print(length(kssREC8GR))
 
@@ -376,6 +376,6 @@ bp <- ggplot(data = df,
 ggsave(paste0(plotDir, "barplot_selected_other_features_TE_families_proportion_of_overlapping_",
               peakLibName1, "_", peakLibName2, "_",
               peakLibName3, "_", peakLibName4, "_",
-              region, "_peaks_kssMYCinput_v020919.pdf"),
+              region, "_peaks.pdf"),
        plot = bp,
        height = 8, width = 10)

@@ -1,5 +1,5 @@
 #!/applications/R/R-3.5.0/bin/Rscript
-#
+
 # Plot bar graph of log2(observed:expected) peaks overlapping other features
 
 # Selected other features:
@@ -9,14 +9,14 @@
 # Hypo-CHH DMRs [23]
 
 # Usage:
-# ./other_selected_features_TE_selected_families_wt_vs_kss_REC8_SPO11oligos_peri_peaks_kssMYCinput.R "Pericentromeric REC8-HA peaks and SPO11-1-oligo hotspots" "wt REC8-HA" "kss REC8-HA" "wt SPO11-1" "kss SPO11-1" REC8_HA_Rep2 kss_REC8_HA_Rep1 wt_SPO11oligo kss_SPO11oligo REC8_HA_Rep2 peri 10000
+# ./other_selected_features_TE_selected_families_wt_vs_kss_REC8_SPO11oligos_peri_peaks.R "Pericentromeric REC8-HA peaks and SPO11-1-oligo hotspots" "wt REC8-HA_Rep2" "kss REC8-HA_Rep1" "wt SPO11-1" "kss SPO11-1" REC8_HA_Rep2 kss_REC8_HA_Rep1 wt_SPO11oligo kss_SPO11oligo REC8_HA_Rep2 peri 10000
 
 library(ggplot2)
 library(ggthemes)
 
 #plotTitle <- "Pericentromeric REC8-HA peaks and SPO11-1-oligo hotspots"
-#pt1Name <- "wt REC8-HA"
-#pt2Name <- "kss REC8-HA"
+#pt1Name <- "wt REC8-HA_Rep2"
+#pt2Name <- "kss REC8-HA_Rep1"
 #pt3Name <- "wt SPO11-1"
 #pt4Name <- "kss SPO11-1"
 #pt1LibName <- "REC8_HA_Rep2" 
@@ -51,9 +51,9 @@ pt1Dir <- paste0("/home/ajt200/analysis/REC8_pooled/peaks/PeakRanger1.18/ranger/
                  region, "/regioneR/noMinWidth_mergedOverlaps/")
 # Note that last subdirectory (noMinWidth_mergedOverlaps_vs_REC8_MYC_Rep1)
 # should contain results for kss REC8-HA Rep1 versus other wild type REC8 replicate
-pt2Dir <- paste0("/home/ajt200/analysis/180622_Chris_lambing_ChIP_REC8_HA_Col_kss/kss/peaks/PeakRanger1.18/ranger/MYC_Rep1_input_p0.001_q0.01/",
+pt2Dir <- paste0("/home/ajt200/analysis/180622_Chris_lambing_ChIP_REC8_HA_Col_kss/kss/peaks/PeakRanger1.18/ranger/rep_specific_input_p0.001_q0.01/",
                  pt2LibName, "/",
-                 region, "/regioneR/noMinWidth_mergedOverlaps_vs_REC8_HA_Rep2/")
+                 region, "/regioneR/noMinWidth_mergedOverlaps_vs_REC8_MYC_Rep1/")
 pt3Dir <- paste0("/projects/ajt200/BAM_masters/SPO11-oligo/WT/peaks/PeakRanger1.18/ranger/p0.2_q0.2/idr/qValRank/minuslog10_pval_qval/RPI1_RPI8_profiles_rangerPeaks_idr0.05/",
                  region, "/regioneR/noMinWidth_mergedOverlaps/")
 pt4Dir <- paste0("/projects/ajt200/BAM_masters/SPO11-oligo/suvh456/peaks/PeakRanger1.18/ranger/p0.2_q0.2/idr/qValRank/minuslog10_pval_qval/RPI34_RPI35_profiles_rangerPeaks_idr0.05/",
@@ -225,8 +225,8 @@ ptOrder <- c(ptOrder[otherNumbersREC8],
              c(ptOrder_DNA, ptOrder_RNA)[famNumbers])
 pt1 <- c(pt1[otherNumbersREC8],
          c(pt1_DNA, pt1_RNA)[famNumbers])
-pt2 <- c(pt2[c(2:5)],
-         c(pt2_DNA, pt2_RNA))
+pt2 <- c(pt2[otherNumbers],
+         c(pt2_DNA, pt2_RNA)[famNumbers])
 pt3 <- c(pt3[otherNumbers],
          c(pt3_DNA, pt3_RNA)[famNumbers])
 pt4 <- c(pt4[otherNumbers],
@@ -547,7 +547,7 @@ ggsave(paste0(plotDir, "barplot_selected_other_features_TE_families_permTestResu
               "log2_Observed_Expected_",
               pt1LibName, "_", pt2LibName, "_",
               pt3LibName, "_", pt4LibName, "_",
-              region, "_peaks_kssMYCinput_v040719.pdf"),
+              region, "_peaks.pdf"),
        plot = bp,
        height = 8, width = 10)
 save(bp,
@@ -556,4 +556,4 @@ save(bp,
                    "log2_Observed_Expected_",
                    pt1LibName, "_", pt2LibName, "_",
                    pt3LibName, "_", pt4LibName, "_",
-                   region, "_peaks_kssMYCinput_v040719.RData"))
+                   region, "_peaks.RData"))
