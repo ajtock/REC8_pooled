@@ -163,6 +163,7 @@ f <- rep(x = 1/smoothN, times = smoothN)
 
 filt_winDF <- NULL
 for(i in seq_along(chrs)) {
+  print(chrs[i])
   # ChIP
   filt_ChIP <- stats::filter(winDFchrList[[i]][,4],
                              filter = f,
@@ -178,18 +179,27 @@ for(i in seq_along(chrs)) {
   filt_input[ (length(filt_input)-flank+1) :
                length(filt_input) ] <- filt_input[ (length(filt_input)-flank) ]
   # log2
-  filt_log2 <- stats::filter(winDFchrList[[i]][,4],
+  filt_log2 <- stats::filter(winDFchrList[[i]][,6],
                              filter = f,
                              sides = 2)
   filt_log2[1:flank] <- filt_log2[flank+1]
   filt_log2[ (length(filt_log2)-flank+1) :
               length(filt_log2) ] <- filt_log2[ (length(filt_log2)-flank) ]
   # Combine in dataframe
-
   filt_winDFchr <- data.frame(chr = as.character(chrs[i]),
-                              window = ,
-                              cumwindow = as.integer(start(winGR) + sumchr[i]),
-                              ChIP = as.numeric(ChIPwinCov),
-                              input = as.numeric(inputwinCov),
-                              log2ChIPinput = as.numeric(log2ChIPinput))
-  winDF <- rbind(winDF, winDFchr)
+                              window = as.integer(winDFchrList[[i]]$window),
+                              cumwindow = as.integer(winDFchrList[[i]]$cumwindow),
+                              filt_ChIP = as.numeric(filt_ChIP),
+                              filt_input = as.numeric(filt_input),
+                              filt_log2ChIPinput = as.numeric(filt_log2))
+  filt_winDF <- rbind(filt_winDF, filt_winDFchr)
+}
+colnames(filt_winDF) <- c("chr", "window", "cumwindow",
+                          paste0("filt_", ChIPname),
+                          paste0("filt_", inputname),
+                          paste0("filt_log2_", ChIPname, "_", inputname))
+write.table(filt_winDF,
+            file = paste0("filt_", ChIPname, "_", inputname,
+                          "_genome_norm_coverage_",
+                          winName, "_noZscore.tsv"),
+            quote = F, sep = "\t", row.names = F, col.names = T)
