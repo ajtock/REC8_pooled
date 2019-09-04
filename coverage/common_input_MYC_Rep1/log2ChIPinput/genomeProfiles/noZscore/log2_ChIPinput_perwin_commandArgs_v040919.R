@@ -29,6 +29,8 @@ ChIPname <- args[3]
 inputname <- args[4]
 winSize <- as.numeric(args[5])
 winName <- as.character(args[6])
+# smoothN must be an odd number
+# see profile smoothing below
 smoothN <- as.numeric(args[7])
  
 ChIPfile <- paste0(ChIPDir, ChIPname, "_norm_allchrs_coverage_coord_tab.bed")
@@ -140,4 +142,54 @@ write.table(winDF,
                           winName, "_noZscore.tsv"),
             quote = F, sep = "\t", row.names = F, col.names = T) 
 
+# Create list in which each list element is a dataframe
+# of windowed coverage values for a chromosome to to
+# enable per-chromosome smoothing
+winDFchrList <- lapply(seq_along(chrs), function(i) {
+  winDF[winDF$chr == chrs[i],]
+})
 
+# Calculate moving average (MA) of current window,
+# (smoothN/2)-0.5 previous windows (where smoothN is odd),
+# and
+# (smoothN/2)-0.5 subsequent windows (where smoothN is odd)
+# The higher smoothN is, the greater the smoothing
+# Use modulo operation (%%) to confirm that the remainder of
+# integer division smoothN %/% 2 is 1 (i.e., smoothN is odd)
+stopifnot(smoothN %% 2 == 1)
+flank <- smoothN %/% 2
+# Define MA filter coefficients
+f <- rep(x = 1/smoothN, times = smoothN)
+
+filt_winDF <- NULL
+for(i in seq_along(chrs)) {
+  # ChIP
+  filt_ChIP <- stats::filter(winDFchrList[[i]][,4],
+                             filter = f,
+                             sides = 2)
+  filt_ChIP[1:flank] <- filt_ChIP[flank+1]
+  filt_ChIP[ (length(filt_ChIP)-flank+1) :
+              length(filt_ChIP) ] <- filt_ChIP[ (length(filt_ChIP)-flank) ]
+  # input
+  filt_input <- stats::filter(winDFchrList[[i]][,5],
+                              filter = f,
+                              sides = 2)
+  filt_input[1:flank] <- filt_input[flank+1]
+  filt_input[ (length(filt_input)-flank+1) :
+               length(filt_input) ] <- filt_input[ (length(filt_input)-flank) ]
+  # log2
+  filt_log2 <- stats::filter(winDFchrList[[i]][,4],
+                             filter = f,
+                             sides = 2)
+  filt_log2[1:flank] <- filt_log2[flank+1]
+  filt_log2[ (length(filt_log2)-flank+1) :
+              length(filt_log2) ] <- filt_log2[ (length(filt_log2)-flank) ]
+  # Combine in dataframe
+
+  filt_winDFchr <- data.frame(chr = as.character(chrs[i]),
+                              window = ,
+                              cumwindow = as.integer(start(winGR) + sumchr[i]),
+                              ChIP = as.numeric(ChIPwinCov),
+                              input = as.numeric(inputwinCov),
+                              log2ChIPinput = as.numeric(log2ChIPinput))
+  winDF <- rbind(winDF, winDFchr)
