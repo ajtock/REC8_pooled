@@ -10,19 +10,19 @@
 # kss_REC8_HA_Rep1 (red4)
 
 # Usage:
-# Rscript ./log2_ChIPinput_perwin_PLOTONLY_v040919.R 10kb 'REC8_HA_Rep2,REC8_HA_Rep1,REC8_MYC_Rep1' 'kss_REC8_HA_Rep1,kss_REC8_HA_Rep2' 'wt REC8-HA_Rep2,wt REC8-HA_Rep1,wt REC8-Myc_Rep1' 'kss REC8-HA_Rep1,kss REC8-HA_Rep2' '
+# Rscript ./log2_ChIPinput_perwin_PLOTONLY_v040919.R 10kb 'REC8_HA_Rep2,REC8_HA_Rep1,REC8_MYC_Rep1' 'kss_REC8_HA_Rep1,kss_REC8_HA_Rep2' 'wt REC8-HA_Rep2,wt REC8-HA_Rep1,wt REC8-Myc_Rep1' 'kss REC8-HA_Rep1,kss REC8-HA_Rep2' 'red,red4'
 
-winName <- "10kb"
-geno1Names <- unlist(strsplit("REC8_HA_Rep2,REC8_HA_Rep1,REC8_MYC_Rep1",
-                              split = ","))
-geno2Names <- unlist(strsplit("kss_REC8_HA_Rep1,kss_REC8_HA_Rep2",
-                              split = ","))
-geno1NamesPlot <- unlist(strsplit("wt REC8-HA_Rep2,wt REC8-HA_Rep1,wt REC8-Myc_Rep1",
-                                  split = ","))
-geno2NamesPlot <- unlist(strsplit("kss REC8-HA_Rep1,kss REC8-HA_Rep2",
-                                  split = ","))
-genoColours <- unlist(strsplit("red,red4",
-                               split = ","))
+#winName <- "10kb"
+#geno1Names <- unlist(strsplit("REC8_HA_Rep2,REC8_HA_Rep1,REC8_MYC_Rep1",
+#                              split = ","))
+#geno2Names <- unlist(strsplit("kss_REC8_HA_Rep1,kss_REC8_HA_Rep2",
+#                              split = ","))
+#geno1NamesPlot <- unlist(strsplit("wt REC8-HA_Rep2,wt REC8-HA_Rep1,wt REC8-Myc_Rep1",
+#                                  split = ","))
+#geno2NamesPlot <- unlist(strsplit("kss REC8-HA_Rep1,kss REC8-HA_Rep2",
+#                                  split = ","))
+#genoColours <- unlist(strsplit("red,red4",
+#                               split = ","))
 
 args <- commandArgs(trailingOnly = T)
 winName <- as.character(args[1])
