@@ -46,33 +46,76 @@ ChIPseqNames <- c(
                   "ASY1_Rep2",
                   "REC8_HA_Rep2",
                   "SPO11_1_oligos_RPI1",
+                  "MNase",
                   "MTOPVIB_HA_Rep1",
-                  "MTOPVIB_HA_Rep2",
-                  "MNase"
+                  "MTOPVIB_HA_Rep2"
                  )
 ChIPseqNamesPlot <- c(
                       "ASY1",
                       "REC8-HA",
                       "SPO11-1-oligos",
+                      "MNase",
                       "MTOPVIB Rep1",
-                      "MTOPVIB Rep2",
-                      "MNase"
+                      "MTOPVIB Rep2"
                      )
 ChIPseqColours <- c(
                     "red",
                     "green2",
                     "dodgerblue2",
+                    "purple4",
                     "darkcyan",
-                    "darkcyan",
-                    "purple4"
+                    "cyan"
                    )
+#ChIPseqNames <- c(
+#                  "REC8_HA_Rep2",
+#                  "MNase",
+#                  "SPO11_1_oligos_RPI1",
+#                  "WT_RNAseq_Chris_Rep1",
+#                  "H3K4me3_ChIP14",
+#                  "H2AZ"
+#                 )
+#ChIPseqNamesPlot <- c(
+#                      "REC8-HA",
+#                      "Nucleosomes",
+#                      "SPO11-1-oligos",
+#                      "RNA-seq",
+#                      "H3K4me3",
+#                      "H2A.Z"
+#                     )
+#ChIPseqColours <- c(
+#                    "red",
+#                    "purple4",
+#                    "dodgerblue2",
+#                    "magenta",
+#                    "goldenrod1",
+#                    "forestgreen"
+#                   )
 
-# Load matrix and extract region for sorting of features
+# Load matrix 
 mat1 <- as.matrix(read.table(paste0(matDir,
                                     libName,
                                     "_norm_cov_feature_smoothed_target_and_",
                                     flankName, "_flank_dataframe.txt"),
                              header = T))
+
+# Find and remove features that do not vary in coverage from window to window
+mat1RowVars <- apply(X = mat1,
+                     MARGIN = 1,
+                     FUN = var)
+print("Indices of features that do not vary in coverage from window to window:")
+mat1NonVarRows <- which(mat1RowVars >= 0 & mat1RowVars <= 0.055, arr.ind = F, useNames = T)
+print(mat1NonVarRows)
+mat1 <- mat1[-mat1NonVarRows,]
+write.table(mat1NonVarRows,
+            file = "row_indices_of_representative_genes_that_do_not_vary_in_coverage_from_leftmost_flanking_window_to_rightmost_flanking_window.txt",
+            quote = T, row.names = F, col.names = F)
+genesDF <- read.table("/projects/ajt200/TAIR10/representative_genes/representative_genes_uniq_fmt_strand.txt",
+                      header = T)
+genesDFNonVarRows <- genesDF[mat1NonVarRows,]
+write.table(genesDFNonVarRows,
+            file = "representative_genes_uniq_fmt_strand__genes_that_do_not_vary_in_coverage_from_leftmost_flanking_window_to_rightmost_flanking_window.txt",
+            quote = F, sep = "\t", row.names = T, col.names = T)
+# Extract region for sorting of features
 bodyLength <- (dim(mat1)[2]-((upstream+downstream)/binSize))*binSize
 if( region == "promoters" ) {
   mat1Region <- mat1[,(((upstream-500)/binSize)+1):(upstream/binSize)]
@@ -83,6 +126,8 @@ if( region == "promoters" ) {
 } else {
   print("The region name provided does not match 'promoters', 'terminators', or 'bodies'")
 }
+
+# Order features by decreasing coverage within mat1Region
 mat1RegionRowMeans <- rowMeans(mat1Region, na.rm = T)
 mat1RegionRowMeansSorted <- sort.int(mat1RegionRowMeans,
                                      decreasing = T,
@@ -107,7 +152,8 @@ mats <- mclapply(seq_along(ChIPseqNames), function(x) {
                               ChIPseqNames[x],                            
                               "_norm_cov_feature_smoothed_target_and_",
                               flankName, "_flank_dataframe.txt"),
-                       header = T))
+  # Remove features that do not vary in coverage from window to window
+                       header = T))[-mat1NonVarRows,]
 }, mc.cores = length(ChIPseqNames))
 
 # Sort by decreasing mat1RegionRowMeans
