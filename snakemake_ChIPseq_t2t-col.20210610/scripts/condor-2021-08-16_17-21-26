@@ -1,0 +1,18 @@
+# pwd : /home/ajt200/analysis/REC8_pooled/snakemake_ChIPseq_t2t-col.20210610/scripts
+
+Universe   = vanilla
+Executable = /bin/bash
+Transfer_executable = False
+should_transfer_files = NO
+Arguments = "/home/ajt200/analysis/REC8_pooled/snakemake_ChIPseq_t2t-col.20210610/scripts/bigwigCompare_log2ChIPcontrol_bw.sh WT_REC8_HA_Rep2_ChIP WT_REC8_Myc_Rep1_input 1000 1kb 48"
+Requirements = OpSys == "LINUX" && Arch == "X86_64"  && TARGET.FileSystemDomain == "plantsci.internal.cam.ac.uk"
+rank = -LoadAvg
+request_memory = 50000
+request_cpus = 48
+getenv = True
+Log = log-2021-08-16_17-21-26.txt
+Input = 
+Output = stdout-2021-08-16_17-21-26.txt
+Error = error-2021-08-16_17-21-26.txt
+Notification = never
+Queue

@@ -1,0 +1,188 @@
+# Snakemake workflow for creating a matrix of windowed
+# coverage values for genomic features and flanking regions 
+
+# Usage ("--cores" should match the "THREADS" parameter in config.yaml, and reflect available threads):
+# conda activate ChIPseq_mapping
+# snakemake -p --cores 48
+# conda deactivate
+
+import os
+
+# Specify config file parameters
+configfile: "config.yaml"
+sample    = config["SAMPLE"]
+chrName   = config["FEATURES"]["chrName"]
+reference = config["MAPPING"]["reference"]
+refbase   = os.path.basename(reference)
+mode      = config["MAPPING"]["mode"]
+flankName = config["COVERAGE"]["flankName"]
+binName   = config["COVERAGE"]["binName"]
+
+# Specify the desired end target file(s)
+rule all:
+    input:
+        expand("matrices/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_LRZgenes_in_{chrName}_matrix_bin{binName}_flank{flankName}.tab",
+               sample = sample,
+               refbase = refbase,
+               mode = mode,
+               chrName = chrName,
+               binName = binName,
+               flankName = flankName),
+        expand("matrices/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_LRZgenes_in_{chrName}_ranLoc_matrix_bin{binName}_flank{flankName}.tab",
+               sample = sample,
+               refbase = refbase,
+               mode = mode,
+               chrName = chrName,
+               binName = binName,
+               flankName = flankName),
+        expand("matrices/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_NRZgenes_in_{chrName}_matrix_bin{binName}_flank{flankName}.tab",
+               sample = sample,
+               refbase = refbase,
+               mode = mode,
+               chrName = chrName,
+               binName = binName,
+               flankName = flankName),
+        expand("matrices/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_NRZgenes_in_{chrName}_ranLoc_matrix_bin{binName}_flank{flankName}.tab",
+               sample = sample,
+               refbase = refbase,
+               mode = mode,
+               chrName = chrName,
+               binName = binName,
+               flankName = flankName),
+        expand("matrices/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_armgenes_in_{chrName}_matrix_bin{binName}_flank{flankName}.tab",
+               sample = sample,
+               refbase = refbase,
+               mode = mode,
+               chrName = chrName,
+               binName = binName,
+               flankName = flankName),
+        expand("matrices/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_armgenes_in_{chrName}_ranLoc_matrix_bin{binName}_flank{flankName}.tab",
+               sample = sample,
+               refbase = refbase,
+               mode = mode,
+               chrName = chrName,
+               binName = binName,
+               flankName = flankName),
+
+# Use computeMatrix function from deepTools to create a matrix of
+# coverage values for genomic features and flanking regions, and
+# for equivalent random loci and flanking regions
+rule compute_matrix_genomeRegionFeatures:
+    """Create matrices of coverage values for genomic features and random loci"""
+    input:
+        LRZgenesFile  = "/home/ajt200/analysis/nanopore/{refbase}/annotation/genes/{refbase}_representative_genes_LRZ_{chrName}.bed",
+        LRZranLocFile = "/home/ajt200/analysis/nanopore/{refbase}/annotation/genes/{refbase}_representative_genes_LRZ_{chrName}_randomLoci.bed",
+        NRZgenesFile  = "/home/ajt200/analysis/nanopore/{refbase}/annotation/genes/{refbase}_representative_genes_NRZ_{chrName}.bed",
+        NRZranLocFile = "/home/ajt200/analysis/nanopore/{refbase}/annotation/genes/{refbase}_representative_genes_NRZ_{chrName}_randomLoci.bed",
+        armgenesFile  = "/home/ajt200/analysis/nanopore/{refbase}/annotation/genes/{refbase}_representative_genes_arm_{chrName}.bed",
+        armranLocFile = "/home/ajt200/analysis/nanopore/{refbase}/annotation/genes/{refbase}_representative_genes_arm_{chrName}_randomLoci.bed",
+        BW            = "../{mode}/bw/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm.bw"
+    output:
+        LRZgenesGZ   = temp("matrices/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_LRZgenes_in_{chrName}_matrix_bin{binName}_flank{flankName}.gz"),
+        LRZgenesTAB  = "matrices/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_LRZgenes_in_{chrName}_matrix_bin{binName}_flank{flankName}.tab",
+        LRZranLocGZ  = temp("matrices/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_LRZgenes_in_{chrName}_ranLoc_matrix_bin{binName}_flank{flankName}.gz"),
+        LRZranLocTAB = "matrices/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_LRZgenes_in_{chrName}_ranLoc_matrix_bin{binName}_flank{flankName}.tab",
+        NRZgenesGZ   = temp("matrices/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_NRZgenes_in_{chrName}_matrix_bin{binName}_flank{flankName}.gz"),
+        NRZgenesTAB  = "matrices/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_NRZgenes_in_{chrName}_matrix_bin{binName}_flank{flankName}.tab",
+        NRZranLocGZ  = temp("matrices/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_NRZgenes_in_{chrName}_ranLoc_matrix_bin{binName}_flank{flankName}.gz"),
+        NRZranLocTAB = "matrices/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_NRZgenes_in_{chrName}_ranLoc_matrix_bin{binName}_flank{flankName}.tab",
+        armgenesGZ   = temp("matrices/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_armgenes_in_{chrName}_matrix_bin{binName}_flank{flankName}.gz"),
+        armgenesTAB  = "matrices/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_armgenes_in_{chrName}_matrix_bin{binName}_flank{flankName}.tab",
+        armranLocGZ  = temp("matrices/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_armgenes_in_{chrName}_ranLoc_matrix_bin{binName}_flank{flankName}.gz"),
+        armranLocTAB = "matrices/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_armgenes_in_{chrName}_ranLoc_matrix_bin{binName}_flank{flankName}.tab"
+    params:
+        regionBodyLength = config["COVERAGE"]["regionBodyLength"],
+        startLabel       = config["COVERAGE"]["startLabel"],
+        endLabel         = config["COVERAGE"]["endLabel"],
+        upstream         = config["COVERAGE"]["upstream"],
+        downstream       = config["COVERAGE"]["downstream"],
+        binSize          = config["COVERAGE"]["binSize"],
+        sortRegions      = config["COVERAGE"]["sortRegions"]
+    log:
+        LRZgenes  = "logs/computeMatrix/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_LRZgenes_in_{chrName}_matrix_bin{binName}_flank{flankName}.log",
+        LRZranLoc = "logs/computeMatrix/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_LRZgenes_in_{chrName}_ranLoc_matrix_bin{binName}_flank{flankName}.log",
+        NRZgenes  = "logs/computeMatrix/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_NRZgenes_in_{chrName}_matrix_bin{binName}_flank{flankName}.log",
+        NRZranLoc = "logs/computeMatrix/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_NRZgenes_in_{chrName}_ranLoc_matrix_bin{binName}_flank{flankName}.log",
+        armgenes  = "logs/computeMatrix/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_armgenes_in_{chrName}_matrix_bin{binName}_flank{flankName}.log",
+        armranLoc = "logs/computeMatrix/{sample}_MappedOn_{refbase}_lowXM_{mode}_sort_norm_armgenes_in_{chrName}_ranLoc_matrix_bin{binName}_flank{flankName}.log"
+    threads:
+        config["THREADS"]
+    shell:
+        "(computeMatrix scale-regions"
+        " --regionsFileName {input.LRZgenesFile}"
+        " --scoreFileName {input.BW}"
+        " --outFileName {output.LRZgenesGZ}"
+        " --outFileNameMatrix {output.LRZgenesTAB}"
+        " --regionBodyLength {params.regionBodyLength}"
+        " --startLabel {params.startLabel}"
+        " --endLabel {params.endLabel}"
+        " --upstream {params.upstream}"
+        " --downstream {params.downstream}"
+        " --binSize {params.binSize}"
+        " --sortRegions {params.sortRegions}"
+        " --numberOfProcessors {threads}) 2> {log.LRZgenes}; "
+        "(computeMatrix scale-regions"
+        " --regionsFileName {input.LRZranLocFile}"
+        " --scoreFileName {input.BW}"
+        " --outFileName {output.LRZranLocGZ}"
+        " --outFileNameMatrix {output.LRZranLocTAB}"
+        " --regionBodyLength {params.regionBodyLength}"
+        " --startLabel {params.startLabel}"
+        " --endLabel {params.endLabel}"
+        " --upstream {params.upstream}"
+        " --downstream {params.downstream}"
+        " --binSize {params.binSize}"
+        " --sortRegions {params.sortRegions}"
+        " --numberOfProcessors {threads}) 2> {log.LRZranLoc}; "
+        "(computeMatrix scale-regions"
+        " --regionsFileName {input.NRZgenesFile}"
+        " --scoreFileName {input.BW}"
+        " --outFileName {output.NRZgenesGZ}"
+        " --outFileNameMatrix {output.NRZgenesTAB}"
+        " --regionBodyLength {params.regionBodyLength}"
+        " --startLabel {params.startLabel}"
+        " --endLabel {params.endLabel}"
+        " --upstream {params.upstream}"
+        " --downstream {params.downstream}"
+        " --binSize {params.binSize}"
+        " --sortRegions {params.sortRegions}"
+        " --numberOfProcessors {threads}) 2> {log.NRZgenes}; "
+        "(computeMatrix scale-regions"
+        " --regionsFileName {input.NRZranLocFile}"
+        " --scoreFileName {input.BW}"
+        " --outFileName {output.NRZranLocGZ}"
+        " --outFileNameMatrix {output.NRZranLocTAB}"
+        " --regionBodyLength {params.regionBodyLength}"
+        " --startLabel {params.startLabel}"
+        " --endLabel {params.endLabel}"
+        " --upstream {params.upstream}"
+        " --downstream {params.downstream}"
+        " --binSize {params.binSize}"
+        " --sortRegions {params.sortRegions}"
+        " --numberOfProcessors {threads}) 2> {log.NRZranLoc}; "
+        "(computeMatrix scale-regions"
+        " --regionsFileName {input.armgenesFile}"
+        " --scoreFileName {input.BW}"
+        " --outFileName {output.armgenesGZ}"
+        " --outFileNameMatrix {output.armgenesTAB}"
+        " --regionBodyLength {params.regionBodyLength}"
+        " --startLabel {params.startLabel}"
+        " --endLabel {params.endLabel}"
+        " --upstream {params.upstream}"
+        " --downstream {params.downstream}"
+        " --binSize {params.binSize}"
+        " --sortRegions {params.sortRegions}"
+        " --numberOfProcessors {threads}) 2> {log.armgenes}; "
+        "(computeMatrix scale-regions"
+        " --regionsFileName {input.armranLocFile}"
+        " --scoreFileName {input.BW}"
+        " --outFileName {output.armranLocGZ}"
+        " --outFileNameMatrix {output.armranLocTAB}"
+        " --regionBodyLength {params.regionBodyLength}"
+        " --startLabel {params.startLabel}"
+        " --endLabel {params.endLabel}"
+        " --upstream {params.upstream}"
+        " --downstream {params.downstream}"
+        " --binSize {params.binSize}"
+        " --sortRegions {params.sortRegions}"
+        " --numberOfProcessors {threads}) 2> {log.armranLoc}"
